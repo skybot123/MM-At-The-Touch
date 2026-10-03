@@ -13,11 +13,13 @@ enable_bid: true
 enable_ask: true
 fee_maker_pct: 0
 fee_taker_pct: 0.00058
-min_mos_per_regime: 10
+min_mos_per_regime: 25
 min_sojourns_per_regime: 10
 model_refit_interval: 15
 fill_cooldown_seconds: 2
 phi: 5.0e-06
-drift_scale_end: 0.5
+drift_scale_start: 0.5
+drift_scale_end: 1.0
+drift_scale_trades: 1000
 status_log_interval: 60
 total_amount_quote: 240

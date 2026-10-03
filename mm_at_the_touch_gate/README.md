@@ -40,7 +40,7 @@ stops the loop and the bot. The coins stay in the account; nothing is sold.
 
 ## What to expect
 
-- **First 30-90 minutes: little or no quoting.** Each pair's model warms up (`fit=0` in the status line), then buys
+- **First 1-3 hours: little or no quoting.** Each pair's model warms up (`fit=0` in the status line), then buys
   its starting coin with **bids only**. Both are normal, not failures.
 - **Then both sides quote as the model decides.** It may sit a side out; that's the policy working.
 - **Only a pair with no status line for an hour is a problem** (no market data reaching it).
@@ -62,8 +62,8 @@ status line and the bot's logs. What the status line means:
 | Quoting, but `fills` stays 0 | Orders are live but nobody is trading against them yet. |
 | `age_s` over ~30 | The order-book feed has stalled. |
 
-**Warm-up needs**, per pair, in each of 5 order-book regimes: **10 buy and 10 sell market orders** (prints within
-50 ms count as one) and **10 visits** to that regime. That's at least 100 market orders in total. It usually takes
+**Warm-up needs**, per pair, in each of 5 order-book regimes: **25 buy and 25 sell market orders** (prints within
+50 ms count as one) and **10 visits** to that regime. That's at least 250 market orders in total. It usually takes
 longer because the rarest regime sets the pace.
 
 **Useful questions:**
