@@ -2212,6 +2212,23 @@ class MMAtTheTouch(ControllerBase):
         on = "both" if mos and visits else "mos" if mos else "visits" if visits else "-"
         return len(short), on
 
+    # Short tags for the five regimes, strong sell -> strong buy, so the status line stays one line.
+    _REGIME_TAGS = ("ss", "ms", "neu", "mb", "sb")
+
+    def _progress(self) -> str:
+        """
+        Warm-up progress per regime as tag:buys/sells/visits against the floor, or tag:ok once met.
+        E.g. ss:4/7/10,ms:ok,neu:4/2/3,mb:ok,sb:0/0/1. '-' before the first evaluation.
+        """
+        stats = self._stats
+        if stats is None:
+            return "-"
+        parts = []
+        for tag, row in zip(self._REGIME_TAGS, stats.coverage_.to_dict("index").values()):
+            counts = f"{int(row['buy_mos'])}/{int(row['sell_mos'])}/{int(row['visits'])}"
+            parts.append(f"{tag}:{'ok' if row['met'] else counts}")
+        return ",".join(parts)
+
     def _economics(self) -> tuple[float, float] | None:
         """
         In the current regime, at true fees: edge per fill in bps, half of (Delta - breakeven) over
@@ -2233,7 +2250,8 @@ class MMAtTheTouch(ControllerBase):
         """
         state     active | standby | partial (one side enabled)
         fit       1 once a policy exists. short=regimes below the evidence floor, short_on=what
-                  they lack (mos/visits/both), floor=min_mos_per_regime, err=1 if the last refit failed
+                  they lack (mos/visits/both), need=floor as buys/sells/visits, regimes=each
+                  regime's buys/sells/visits so far (see _progress), err=1 if the last refit failed
         q, post   inventory in units, and the sides the policy wants now (B, A, BA or -)
         edge_bps, est_vol_h   see _economics; nan before the first fit
         vol, fills, live_bid_s, live_ask_s, up_s   session totals: own filled notional, fill count,
@@ -2260,7 +2278,9 @@ class MMAtTheTouch(ControllerBase):
         age = f"{now - self._ob_snapshots[-1][0]:.1f}" if self._ob_snapshots else "nan"
         return (
             f"{self._log_tag} status state={self._state} fit={int(self.solver is not None)}"
-            f" short={short} short_on={short_on} floor={self.config.min_mos_per_regime}"
+            f" short={short} short_on={short_on}"
+            f" need={self.config.min_mos_per_regime}/{self.config.min_mos_per_regime}"
+            f"/{self.config.min_sojourns_per_regime} regimes={self._progress()}"
             f" err={int(self._fit_error is not None)}"
             f" q={self.inventory:+d} post={post}"
             f" edge_bps={edge} est_vol_h={est}"

@@ -41,8 +41,8 @@ The loop runs unattended from the moment it is started until I tell it to stop: 
 - It quotes nothing until each of 5 imbalance regimes has min_mos_per_regime buy AND sell market orders and min_sojourns_per_regime completed visits (warm-up). No quotes during warm-up is expected, not a failure.
 - No candles feed: it uses only its pair's order book and public trades.
 - Log: ONE line per pair every status_log_interval seconds, for example:
-  mm_at_the_touch pair=FIL-USDT status state=active fit=1 short=0 short_on=- floor=10 err=0 q=+1 post=BA edge_bps=1.40 est_vol_h=9000 vol=950.00 fills=48 live_bid_s=3000 live_ask_s=2800 up_s=3600 vol_h=4000 pnl=-0.4200 upnl=-0.1000 fees=0.0000 age_s=0.4
-  - fit = 1 once a policy exists; short / short_on = regimes still warming up and what they lack.
+  mm_at_the_touch pair=FIL-USDT status state=active fit=1 short=0 short_on=- need=10/10/10 regimes=ss:ok,ms:ok,neu:ok,mb:ok,sb:ok err=0 q=+1 post=BA edge_bps=1.40 est_vol_h=9000 vol=950.00 fills=48 live_bid_s=3000 live_ask_s=2800 up_s=3600 vol_h=4000 pnl=-0.4200 upnl=-0.1000 fees=0.0000 age_s=0.4
+  - fit = 1 once a policy exists; short / short_on = regimes still warming up and what they lack. need = floor as buys/sells/visits; regimes = each regime (ss, ms, neu, mb, sb = strong sell .. strong buy) as buys/sells/visits so far, or ok once met, e.g. neu:4/7/10.
   - q = inventory units vs the baseline. post = sides the policy posts now (B, A, BA or -).
   - vol, fills, live_bid_s, live_ask_s, up_s = session totals since the bot started. vol_h = last minute's rate.
   - pnl = net incl. unrealized; fees. age_s = age of the latest order-book snapshot.

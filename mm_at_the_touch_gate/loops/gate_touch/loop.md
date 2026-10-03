@@ -38,7 +38,7 @@ NS = mm_at_the_touch_gate-gate_touch (this loop's bot namespace). Bot NS-a runs 
    d. Notify that the bot was deployed, and end the tick.
    Never deploy a bot that already has a running instance.
 2. Read the bot's general logs with run_code (client.bot_orchestration.get_bot_status(<instance>)["data"]["general_logs"]), keep messages containing " status state=", and take the newest line per pair=. A pair with no line this tick is simply reported as "no reading".
-3. Journal one line per pair: fit, short, q, post, vol, vol since last tick, fills, pnl, fees, age_s.
+3. Journal one line per pair: fit, short, regimes (only while fit=0), q, post, vol, vol since last tick, fills, pnl, fees, age_s.
 4. Once an hour, notify a summary: per pair vol and pnl, combined volume since the last summary, total pnl. Give ZRO-USDT's pnl against its vol on its own line. Record the time of each summary with a journal "state" entry; send the next one once at least 3600 seconds have passed since it.
 
 You never call update_config, never change any field, and never place, cancel or close orders.
