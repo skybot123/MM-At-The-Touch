@@ -45,6 +45,37 @@ stops the loop and the bot. The coins stay in the account; nothing is sold.
 - **Then both sides quote as the model decides.** It may sit a side out; that's the policy working.
 - **Only a pair with no status line for an hour is a problem** (no market data reaching it).
 
+## If it isn't trading
+
+Ask Condor, e.g. *"Ask the mm_at_the_touch_gate agent why the bot isn't quoting."* The agent reads each pair's
+status line and the bot's logs. What the status line means:
+
+| Status line shows | What's blocking |
+|---|---|
+| No status line at all | Bot not running or crashed. Check the bot's error logs. |
+| `fit=0 short_on=mos` | Warm-up: waiting for market orders (see below). Normal. |
+| `fit=0 short_on=visits` | Warm-up: waiting for the book to move in and out of a regime. Normal. |
+| `err=1` | A refit failed. The last good policy keeps quoting; the "refit failed" log line says why. |
+| `fit=1 post=-` | The policy sees no edge right now, so it isn't quoting. The model working, not a fault. |
+| `fit=1 post=B`, `q` well below 0 | Buying its starting coin (bids only). Normal at the start. |
+| `post=BA` but `live_bid_s` / `live_ask_s` not growing | Orders are being rejected (balance, minimum size or rate limits). Check the error logs. |
+| Quoting, but `fills` stays 0 | Orders are live but nobody is trading against them yet. |
+| `age_s` over ~30 | The order-book feed has stalled. |
+
+**Warm-up needs**, per pair, in each of 5 order-book regimes: **10 buy and 10 sell market orders** (prints within
+50 ms count as one) and **10 visits** to that regime. That's at least 100 market orders in total. It usually takes
+longer because the rarest regime sets the pace.
+
+**Useful questions:**
+- "What does each pair's latest status line say, and what is each one waiting for?"
+- "Is each pair fitted yet? If not, how many regimes is it short, and short of what?"
+- "Is the policy quoting both sides on each pair right now? If not, why?"
+- "Over the last hour, what share of the time has each side had an order resting?"
+- "Any errors in the bot's logs: rejected orders, insufficient balance, rate limits, failed refits?"
+- "Has each pair finished buying its starting coin (is `q` near 0)?"
+- "What are each pair's volume, fills and PnL so far?"
+- "Is the bot running? What did the loop journal on its last few ticks?"
+
 ## Reference
 
 | Config | Pair | Order | Range | Coin held |
