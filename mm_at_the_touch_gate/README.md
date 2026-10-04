@@ -62,10 +62,10 @@ status line and the bot's logs. What the status line means:
 | Quoting, but `fills` stays 0 | Orders are live but nobody is trading against them yet. |
 | `age_s` over ~30 | The order-book feed has stalled. |
 
-**Warm-up needs**, per pair, in each of 5 order-book regimes: **10 buy and 10 sell market orders** (prints within
-50 ms count as one) and **10 visits** to that regime. That's at least 100 market orders in total. It usually takes
+**Warm-up needs**, per pair, in each of 5 order-book regimes: **3 buy and 3 sell market orders** (prints within
+50 ms count as one) and **10 visits** to that regime. That's at least 30 market orders in total. It usually takes
 longer because the rarest regime sets the pace. The status line's `regimes=` field shows progress per regime as
-buys/sells/visits (or `ok` once met), e.g. `regimes=ss:4/7/10,ms:ok,neu:4/2/3,mb:ok,sb:0/0/1` against `need=10/10/10`.
+buys/sells/visits (or `ok` once met), e.g. `regimes=ss:2/3/6,ms:ok,neu:1/0/3,mb:ok,sb:0/0/1` against `need=3/3/10`.
 
 **Useful questions:**
 - "What does each pair's latest status line say, and what is each one waiting for?"
